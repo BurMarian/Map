@@ -14,8 +14,8 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
+    "isolatedModules": true,
     "jsx": "react",
     "typeRoots": ["./node_modules/@types", "./typings"]
   },
