@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Libs
 import {
@@ -10,18 +10,47 @@ import {
 } from 'react-map-gl';
 
 // Interfaces
-import { ILocation } from './types';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { ILocation } from '../../interfaces';
+
+// Api
+import { markerAPI } from '../../api/map.api';
 
 // Constants
 import { CLUSTERS } from './Map.constants';
 
 export function Map() {
   const [newPlace, setNewPlace] = useState<ILocation | null>(null);
+  const [markers, setMarkers] = useState<
+    QueryDocumentSnapshot<DocumentData, DocumentData>[]
+  >([]);
 
   const initMap: Partial<ViewState> = {
     latitude: 49.842957,
     longitude: 24.031111,
     zoom: 8,
+  };
+
+  useEffect(() => {
+    if (newPlace) {
+      const createMarker = async () => {
+        await markerAPI.addMarker(newPlace);
+        window.location.reload();
+      };
+      createMarker();
+    }
+  }, [newPlace]);
+
+  useEffect(() => {
+    const getMarkersFunc = async () => {
+      const res = await markerAPI.getMarkers();
+      setMarkers(res);
+    };
+    getMarkersFunc();
+  }, []);
+
+  const handleMarkerDelete = async (e: any) => {
+    await markerAPI.deleteMarker(e.target.getLngLat() as ILocation);
   };
 
   return (
@@ -30,7 +59,7 @@ export function Map() {
       mapboxAccessToken={process.env.REACT_APP_TOKEN}
       mapStyle={'mapbox://styles/burbanm/clvf1j04z013701qp23l092n9'}
       style={{ height: '100vh', width: '100vw' }}
-      onClick={(e) => {
+      onDblClick={(e) => {
         setNewPlace({
           lat: e.lngLat.lat,
           lng: e.lngLat.lng,
@@ -77,6 +106,22 @@ export function Map() {
       </Source>
 
       {/* marker */}
+      {markers.map((marker, index) => {
+        return (
+          <Marker
+            key={index}
+            latitude={marker?.data()?.lat}
+            longitude={marker?.data()?.lng}
+            color="orange"
+            draggable
+            style={{
+              cursor: 'pointer',
+            }}
+            onClick={handleMarkerDelete}
+          ></Marker>
+        );
+      })}
+
       {newPlace ? (
         <Marker
           latitude={newPlace?.lat}
