@@ -1,10 +1,9 @@
 // Interfaces
 import { QueryDocumentSnapshot } from 'firebase/firestore';
-import { LngLat } from 'mapbox-gl';
 
 export interface ILocation {
-  lat: LngLat['lat'];
-  lng: LngLat['lng'];
+  lat: number;
+  lng: number;
 }
 
 // firebase
