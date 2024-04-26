@@ -38,7 +38,16 @@ export const markerAPI = {
 
   // add
   async addMarker(location: ILocation) {
-    return await addDoc(collection(db, FIREBASE_COLLECTIONS.markers), location);
+    const addedMarker = await addDoc(
+      collection(db, FIREBASE_COLLECTIONS.markers),
+      location,
+    );
+    const docRef = doc(db, FIREBASE_COLLECTIONS.markers, addedMarker.id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap) {
+      return docSnap;
+    }
   },
 
   // update
@@ -55,7 +64,9 @@ export const markerAPI = {
   // delete
   async deleteMarker(location: ILocation) {
     const marker = await this.getMarker(location);
-    marker?.id &&
-      (await deleteDoc(doc(db, FIREBASE_COLLECTIONS.markers, marker?.id)));
+    if (marker?.id) {
+      await deleteDoc(doc(db, FIREBASE_COLLECTIONS.markers, marker?.id));
+      return marker?.id;
+    }
   },
 };
