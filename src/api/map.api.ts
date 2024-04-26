@@ -1,5 +1,5 @@
 // Configs
-import { db } from '../configs/firebase.config';
+import { db, fb } from '../configs/firebase.config';
 
 // Constants
 import { FIREBASE_COLLECTIONS } from '../constants/map.contant';
@@ -12,10 +12,9 @@ import {
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
   updateDoc,
 } from 'firebase/firestore';
-import { IFirebase, ILocation } from '../interfaces';
+import { ILocation } from '../interfaces';
 
 export const markerAPI = {
   // get
@@ -40,7 +39,11 @@ export const markerAPI = {
   async addMarker(location: ILocation) {
     const addedMarker = await addDoc(
       collection(db, FIREBASE_COLLECTIONS.markers),
-      location,
+      {
+        ...location,
+        createdAt: fb.Timestamp.now(),
+        updatedAt: fb.Timestamp.now(),
+      },
     );
     const docRef = doc(db, FIREBASE_COLLECTIONS.markers, addedMarker.id);
     const docSnap = await getDoc(docRef);
@@ -57,6 +60,7 @@ export const markerAPI = {
     if (marker) {
       return await updateDoc(doc(db, FIREBASE_COLLECTIONS.markers, marker.id), {
         ...newLocation,
+        updatedAt: fb.Timestamp.now(),
       });
     }
   },
