@@ -74,6 +74,8 @@ export function Map() {
     setLoading(false);
   };
 
+  // dev test commit
+
   return (
     <ReactMapGl
       initialViewState={initMap}
