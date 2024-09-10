@@ -74,7 +74,7 @@ export function Map() {
     setLoading(false);
   };
 
-  // dev test commit
+  // dev test commit 2
 
   return (
     <ReactMapGl
