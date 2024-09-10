@@ -61,6 +61,8 @@ export function Map() {
     getMarkersFunc();
   }, []);
 
+  // main test commit
+
   const handleMarkerDelete = async (e: any) => {
     setLoading(true);
     try {
